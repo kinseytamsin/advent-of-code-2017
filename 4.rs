@@ -18,7 +18,7 @@ trait ToStringVec {
     fn to_string_vec(self) -> Vec<String>;
 }
 
-impl <'a> ToStringVec for Vec<&'a str> {
+impl<'a> ToStringVec for Vec<&'a str> {
     fn to_string_vec(self) -> Vec<String> {
         self.iter().map(|s| String::from(*s)).collect()
     }
