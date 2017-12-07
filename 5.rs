@@ -48,9 +48,8 @@ impl JumpVec {
             return Err("position out of bounds");
         }
     }
-
     
-    fn steps_to_escape(&mut self, jump_type: Jump) -> u32 {
+    fn count_steps_to_escape(&mut self, jump_type: Jump) -> u32 {
         let mut steps = 0;
         loop {
             let jump_result = match jump_type {
@@ -84,6 +83,6 @@ fn main() {
                                    .collect();
     let mut instructions = JumpVec::from(instructions);
     let mut new_instructions = instructions.clone();
-    println!("{}", instructions.steps_to_escape(Jump::Old));
-    println!("{}", new_instructions.steps_to_escape(Jump::New));
+    println!("{}", instructions.count_steps_to_escape(Jump::Old));
+    println!("{}", new_instructions.count_steps_to_escape(Jump::New));
 }
