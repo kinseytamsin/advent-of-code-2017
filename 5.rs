@@ -14,34 +14,23 @@ struct JumpVec {
 }
 
 impl JumpVec {
-    #[allow(dead_code)]
-    fn new() -> JumpVec {
-        JumpVec { position: 0, vector: Vec::new() }
-    }
-
-    fn jump(&mut self) -> Result<isize, &str> {
+    fn jump(&mut self, jump_type: &Jump) -> Result<isize, &str> {
         let old_position = self.position;
         let new_position = (self.position as isize)+self.vector[self.position];
         if new_position < self.vector.len() as isize && new_position >= 0 {
             self.position = 
                 (self.position as isize + self.vector[self.position]) as usize;    
-            self.vector[old_position] += 1;
-            return Ok(new_position);
-        } else {
-            return Err("position out of bounds");
-        }
-    }
-
-    fn new_jump(&mut self) -> Result<isize, &str> {
-        let old_position = self.position;
-        let new_position = (self.position as isize)+self.vector[self.position];
-        if new_position < self.vector.len() as isize && new_position >= 0 {
-            self.position = 
-                (self.position as isize + self.vector[self.position]) as usize;    
-            if self.vector[old_position] < 3 {
-                self.vector[old_position] += 1;
-            } else {
-                self.vector[old_position] -= 1;
+            match *jump_type {
+                Jump::Old => {
+                    self.vector[old_position] += 1;
+                },
+                Jump::New => {
+                    if self.vector[old_position] < 3 {
+                        self.vector[old_position] += 1;
+                    } else {
+                        self.vector[old_position] -= 1;
+                    }
+                },
             }
             return Ok(new_position);
         } else {
@@ -52,10 +41,7 @@ impl JumpVec {
     fn count_steps_to_escape(&mut self, jump_type: Jump) -> u32 {
         let mut steps = 0;
         loop {
-            let jump_result = match jump_type {
-                Jump::Old => self.jump(),
-                Jump::New => self.new_jump(),
-            };
+            let jump_result = self.jump(&jump_type);
             steps += 1;
             match jump_result {
                 Ok(_) => continue,
