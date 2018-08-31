@@ -17,7 +17,7 @@ putStrLnShow = putStrLn . show
 main = do
     withFile "1.txt" ReadMode (\hdl -> do
         inputDigits <- fmap digits $ hGetLine hdl
-        let inputMatchingDigitsSum = flip matchingDigitsSum $ inputDigits
+        let inputMatchingDigitsSum = flip matchingDigitsSum inputDigits
         let putSum = putStrLnShow . inputMatchingDigitsSum
         putSum 1
         putSum $ (length inputDigits) `quot` 2)
