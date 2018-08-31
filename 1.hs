@@ -2,16 +2,22 @@ import Data.Char
 import Data.Monoid
 import System.IO
 
+foldSum :: (Foldable t, Num a) => t a -> a
+foldSum = getSum . foldMap Sum
+
+digits :: String -> [Int]
+digits = map digitToInt
+
 neighborDigits :: Int -> [Int] -> [(Int, Int)]
 neighborDigits n = take <$> length <*> (zip <$> cycle <*> (drop n . cycle))
 
-matchingDigitsSum n = getSum . foldMap Sum
+matchingDigitsSum :: Int -> [Int] -> Int
+matchingDigitsSum n = foldSum
                       . map fst
                       . filter (uncurry (==))
                       . neighborDigits n
 
-digits = map digitToInt
-
+putStrLnShow :: Show a => a -> IO ()
 putStrLnShow = putStrLn . show
 
 main = do
