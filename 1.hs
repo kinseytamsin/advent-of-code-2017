@@ -1,3 +1,5 @@
+{-# LANGUAGE Safe #-}
+
 import Data.Char
 import Data.Monoid
 import System.IO

@@ -1,3 +1,5 @@
+{-# LANGUAGE Safe #-}
+
 import Data.List
 import Data.Monoid
 import Data.Tuple
