@@ -5,34 +5,29 @@ import Data.Monoid
 import Data.Tuple
 import System.IO
 
-minMaxRange :: (Foldable t, Num a, Ord a) => t a -> a
-minMaxRange = (-) <$> maximum <*> minimum
-
 foldSum :: (Foldable t, Num a) => t a -> a
 foldSum = getSum . foldMap Sum
 
 minMaxRangeSum :: (Foldable t, Num a, Ord a) => [t a] -> a
 minMaxRangeSum = foldSum . map minMaxRange
+    where minMaxRange = (-) <$> maximum <*> minimum
 
 getCombinations :: [a] -> [(a, a)]
 getCombinations = concatMap (zip <$> (repeat . head) <*> tail) . (init . tails)
 
 evenlyDivisible :: Integral a => a -> a -> Bool
-evenlyDivisible = curry $ (== 0) . uncurry rem
-
-evenlyDivisiblePairs :: Integral a => [(a, a)] -> [(a, a)]
-evenlyDivisiblePairs = filter (uncurry evenlyDivisible) . map swap
+evenlyDivisible x y
+    | x == y    = True
+    | otherwise = let (lesser, greater) = if x < y then (x, y) else (y, x)
+                  in greater `rem` lesser == 0
 
 evenlyDivisiblePairQuotients :: Integral a => [[a]] -> [a]
-evenlyDivisiblePairQuotients = map (uncurry quot)
-                               . concatMap evenlyDivisiblePairs
-                               . map (getCombinations . sort . nub)
-
-readSpreadsheet :: String -> [[Int]]
-readSpreadsheet = (map $ map (read::String->Int) . words) . lines
-
-putStrLnShow :: Show a => a -> IO ()
-putStrLnShow = putStrLn . show
+evenlyDivisiblePairQuotients = map (pairQuotient . swap)
+                               . concatMap getEvenlyDivisiblePairs
+                               . map (getUniqueCombinations)
+    where pairQuotient = uncurry quot
+          getEvenlyDivisiblePairs = filter (uncurry evenlyDivisible)
+          getUniqueCombinations = getCombinations . sort . nub
 
 main = do
     withFile "2.txt" ReadMode (\hdl -> do
@@ -41,3 +36,5 @@ main = do
         let quotients = evenlyDivisiblePairQuotients spreadsheet
         let quotSum = foldSum quotients
         putStrLnShow quotSum)
+    where readSpreadsheet = (map $ map (read::String->Int) . words) . lines
+          putStrLnShow = putStrLn . show
